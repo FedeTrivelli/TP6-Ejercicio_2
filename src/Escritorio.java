@@ -57,6 +57,7 @@ public class Escritorio extends javax.swing.JFrame {
         lblListadoPorNombreIngDescripcion = new javax.swing.JLabel();
         scpListadoPorNombre = new javax.swing.JScrollPane();
         tblListadoPorNombre = new javax.swing.JTable();
+        txtListadoPorNombreDescripcion = new javax.swing.JTextField();
         JIFListadoPorPrecio = new javax.swing.JInternalFrame();
         lblListadoPorPrecioTitulo = new javax.swing.JLabel();
         lblListadoPorPrecioEntre = new javax.swing.JLabel();
@@ -284,7 +285,8 @@ public class Escritorio extends javax.swing.JFrame {
                     .addGroup(JIFListadoPorNombreLayout.createSequentialGroup()
                         .addGroup(JIFListadoPorNombreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblListadoPorNombreTitulo)
-                            .addComponent(lblListadoPorNombreIngDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblListadoPorNombreIngDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtListadoPorNombreDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -296,7 +298,9 @@ public class Escritorio extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(lblListadoPorNombreIngDescripcion)
                 .addGap(18, 18, 18)
-                .addComponent(scpListadoPorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtListadoPorNombreDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52)
+                .addComponent(scpListadoPorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -636,6 +640,7 @@ public class Escritorio extends javax.swing.JFrame {
     private javax.swing.JTextField txtGestionDeProductosCodigo;
     private javax.swing.JTextField txtGestionDeProductosDescripcion;
     private javax.swing.JTextField txtGestionDeProductosPrecio;
+    private javax.swing.JTextField txtListadoPorNombreDescripcion;
     private javax.swing.JTextField txtListadoPorPrecioMax;
     private javax.swing.JTextField txtListadoPorPrecioMin;
     // End of variables declaration//GEN-END:variables
