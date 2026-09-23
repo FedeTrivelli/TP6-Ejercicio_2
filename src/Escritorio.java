@@ -80,6 +80,11 @@ public class Escritorio extends javax.swing.JFrame {
         mitConsultaPorRubro = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         JIFgestionDeProductos.setVisible(true);
 
@@ -242,10 +247,9 @@ public class Escritorio extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(JIFgestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                    .addGroup(JIFgestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                        .addComponent(btnNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(41, 41, 41))
         );
 
@@ -482,6 +486,7 @@ public class Escritorio extends javax.swing.JFrame {
         mnuAdministracion.setText("Administracion");
 
         mitGestionDeProductos.setText("Gestion de productos");
+        mitGestionDeProductos.addActionListener(this::mitGestionDeProductosActionPerformed);
         mnuAdministracion.add(mitGestionDeProductos);
 
         jMenuBar1.add(mnuAdministracion);
@@ -489,12 +494,15 @@ public class Escritorio extends javax.swing.JFrame {
         mnuConsultas.setText("Consultas");
 
         mitConsultaPorNombre.setText("Consulta por nombre");
+        mitConsultaPorNombre.addActionListener(this::mitConsultaPorNombreActionPerformed);
         mnuConsultas.add(mitConsultaPorNombre);
 
         mitConsultaPorPrecio.setText("Consulta por precio");
+        mitConsultaPorPrecio.addActionListener(this::mitConsultaPorPrecioActionPerformed);
         mnuConsultas.add(mitConsultaPorPrecio);
 
         mitConsultaPorRubro.setText("Consulta por rubro");
+        mitConsultaPorRubro.addActionListener(this::mitConsultaPorRubroActionPerformed);
         mnuConsultas.add(mitConsultaPorRubro);
 
         jMenuBar1.add(mnuConsultas);
@@ -524,6 +532,34 @@ public class Escritorio extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        JIFgestionDeProductos.setVisible(false);
+        JIFlistadoPorNombre.setVisible(false);
+        JIFlistadoPorPrecio.setVisible(false);
+        JIFlistadoPorRubro.setVisible(false);
+    }//GEN-LAST:event_formWindowOpened
+
+    private void mitGestionDeProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitGestionDeProductosActionPerformed
+        // TODO add your handling code here:
+        JIFgestionDeProductos.setVisible(true);
+    }//GEN-LAST:event_mitGestionDeProductosActionPerformed
+
+    private void mitConsultaPorNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaPorNombreActionPerformed
+        // TODO add your handling code here:
+        JIFlistadoPorNombre.setVisible(true);
+    }//GEN-LAST:event_mitConsultaPorNombreActionPerformed
+
+    private void mitConsultaPorPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaPorPrecioActionPerformed
+        // TODO add your handling code here:
+        JIFlistadoPorPrecio.setVisible(true);
+    }//GEN-LAST:event_mitConsultaPorPrecioActionPerformed
+
+    private void mitConsultaPorRubroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaPorRubroActionPerformed
+        // TODO add your handling code here:
+        JIFlistadoPorRubro.setVisible(true);
+    }//GEN-LAST:event_mitConsultaPorRubroActionPerformed
 
     /**
      * @param args the command line arguments
