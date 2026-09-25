@@ -1,14 +1,28 @@
+package vista;
+
+import entidades.Categoria;
+import entidades.CategoriaData;
+import entidades.Producto;
+import entidades.ProductoData;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author FEDE-PC
  */
 public class Escritorio extends javax.swing.JFrame {
-    
+
+    private CategoriaData cd;
+    private ProductoData pd;
+    private DefaultTableModel modelo;
+    private Producto productoElegido;
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Escritorio.class.getName());
 
     /**
@@ -16,6 +30,12 @@ public class Escritorio extends javax.swing.JFrame {
      */
     public Escritorio() {
         initComponents();
+        pd = new ProductoData();
+        cd = new CategoriaData();
+        modelo = new DefaultTableModel();
+        llenarCM();
+        desactivarCampos();
+        llenarCabezera();
     }
 
     /**
@@ -88,13 +108,17 @@ public class Escritorio extends javax.swing.JFrame {
         });
 
         JIFGestionDeProductos.setVisible(true);
+        JIFGestionDeProductos.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblGestionDeProductosTitulo.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         lblGestionDeProductosTitulo.setText("Gestion de productos");
+        JIFGestionDeProductos.getContentPane().add(lblGestionDeProductosTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 0, -1, -1));
 
         lblGestionDeProductosFiltrar.setText("Filtrar por categoria:");
+        JIFGestionDeProductos.getContentPane().add(lblGestionDeProductosFiltrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 49, 168, -1));
 
-        cmbFiltrarPorCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbFiltrarPorCategoria.addActionListener(this::cmbFiltrarPorCategoriaActionPerformed);
+        JIFGestionDeProductos.getContentPane().add(cmbFiltrarPorCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(209, 44, 300, -1));
 
         tblGestionDeProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -107,7 +131,14 @@ public class Escritorio extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
+        tblGestionDeProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblGestionDeProductosMouseClicked(evt);
+            }
+        });
         scpGestionDeProductos.setViewportView(tblGestionDeProductos);
+
+        JIFGestionDeProductos.getContentPane().add(scpGestionDeProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 88, 592, 98));
 
         lblGestionDeProductosCodigo.setText("Codigo");
 
@@ -119,9 +150,27 @@ public class Escritorio extends javax.swing.JFrame {
 
         lblGestionDeProductosStock.setText("Stock");
 
+        txtGestionDeProductosCodigo.setEnabled(false);
+        txtGestionDeProductosCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGestionDeProductosCodigoFocusLost(evt);
+            }
+        });
         txtGestionDeProductosCodigo.addActionListener(this::txtGestionDeProductosCodigoActionPerformed);
 
-        cmbGestionDeProductosCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        txtGestionDeProductosDescripcion.setEnabled(false);
+        txtGestionDeProductosDescripcion.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGestionDeProductosDescripcionFocusLost(evt);
+            }
+        });
+
+        txtGestionDeProductosPrecio.setEnabled(false);
+        txtGestionDeProductosPrecio.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGestionDeProductosPrecioFocusLost(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -179,80 +228,33 @@ public class Escritorio extends javax.swing.JFrame {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
+        JIFGestionDeProductos.getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 192, -1, -1));
+
         btnBuscar.setText("Buscar");
+        JIFGestionDeProductos.getContentPane().add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(418, 192, -1, 70));
 
         btnCerrar.setText("Cerrar");
+        btnCerrar.addActionListener(this::btnCerrarActionPerformed);
+        JIFGestionDeProductos.getContentPane().add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(418, 367, 51, -1));
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(this::btnNuevoActionPerformed);
+        JIFGestionDeProductos.getContentPane().add(btnNuevo, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 427, 130, 61));
 
         btnGuardar.setText("Guardar");
+        btnGuardar.setEnabled(false);
+        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
+        JIFGestionDeProductos.getContentPane().add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 427, 130, 61));
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.setEnabled(false);
+        btnActualizar.addActionListener(this::btnActualizarActionPerformed);
+        JIFGestionDeProductos.getContentPane().add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(302, 427, 130, 61));
 
         btnEliminar.setText("Eliminar");
-
-        javax.swing.GroupLayout JIFGestionDeProductosLayout = new javax.swing.GroupLayout(JIFGestionDeProductos.getContentPane());
-        JIFGestionDeProductos.getContentPane().setLayout(JIFGestionDeProductosLayout);
-        JIFGestionDeProductosLayout.setHorizontalGroup(
-            JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JIFGestionDeProductosLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblGestionDeProductosTitulo)
-                .addGap(198, 198, 198))
-            .addGroup(JIFGestionDeProductosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scpGestionDeProductos)
-                .addContainerGap())
-            .addGroup(JIFGestionDeProductosLayout.createSequentialGroup()
-                .addGroup(JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(JIFGestionDeProductosLayout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(lblGestionDeProductosFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFiltrarPorCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(JIFGestionDeProductosLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)
-                        .addGroup(JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCerrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(JIFGestionDeProductosLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(24, Short.MAX_VALUE))
-        );
-        JIFGestionDeProductosLayout.setVerticalGroup(
-            JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JIFGestionDeProductosLayout.createSequentialGroup()
-                .addComponent(lblGestionDeProductosTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblGestionDeProductosFiltrar)
-                    .addComponent(cmbFiltrarPorCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(scpGestionDeProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(JIFGestionDeProductosLayout.createSequentialGroup()
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(105, 105, 105)
-                        .addComponent(btnCerrar)))
-                .addGap(18, 18, 18)
-                .addGroup(JIFGestionDeProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                    .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(41, 41, 41))
-        );
+        btnEliminar.setEnabled(false);
+        btnEliminar.addActionListener(this::btnEliminarActionPerformed);
+        JIFGestionDeProductos.getContentPane().add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 427, 130, 61));
 
         JIFListadoPorNombre.setVisible(true);
 
@@ -425,50 +427,27 @@ public class Escritorio extends javax.swing.JFrame {
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 738, Short.MAX_VALUE)
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(JIFGestionDeProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(358, Short.MAX_VALUE)))
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap(357, Short.MAX_VALUE)
-                    .addComponent(JIFListadoPorPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap(357, Short.MAX_VALUE)
-                    .addComponent(JIFListadoPorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jDesktopPane1Layout.createSequentialGroup()
+            .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                .addComponent(JIFGestionDeProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(JIFListadoPorRubro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 358, Short.MAX_VALUE)))
+                    .addComponent(JIFListadoPorPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JIFListadoPorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 490, Short.MAX_VALUE)
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap(234, Short.MAX_VALUE)
-                    .addComponent(JIFGestionDeProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(JIFListadoPorPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(234, Short.MAX_VALUE)))
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap(234, Short.MAX_VALUE)
-                    .addComponent(JIFListadoPorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(JIFListadoPorRubro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(234, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                        .addComponent(JIFListadoPorPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(JIFListadoPorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(JIFGestionDeProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JIFListadoPorRubro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -565,6 +544,133 @@ public class Escritorio extends javax.swing.JFrame {
         JIFListadoPorRubro.setVisible(true);
     }//GEN-LAST:event_mitConsultaPorRubroActionPerformed
 
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        limpiarCampos();
+        activarCampos();
+        btnActualizar.setEnabled(false);
+        btnGuardar.setEnabled(true);
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void txtGestionDeProductosCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGestionDeProductosCodigoFocusLost
+        // TODO add your handling code here:
+        String val = "[0-9]*";
+        if (!txtGestionDeProductosCodigo.getText().matches(val)) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar solo números");
+            txtGestionDeProductosCodigo.requestFocus();
+        }
+    }//GEN-LAST:event_txtGestionDeProductosCodigoFocusLost
+
+    private void txtGestionDeProductosDescripcionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGestionDeProductosDescripcionFocusLost
+        // TODO add your handling code here:
+        if (txtGestionDeProductosDescripcion.getText().length() == 0) {
+            JOptionPane.showMessageDialog(this, "La descripcion no debe estar vacia");
+            txtGestionDeProductosDescripcion.requestFocus();
+        }
+    }//GEN-LAST:event_txtGestionDeProductosDescripcionFocusLost
+
+    private void txtGestionDeProductosPrecioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGestionDeProductosPrecioFocusLost
+        // TODO add your handling code here:
+        try {
+            String precio = txtGestionDeProductosPrecio.getText();
+            double pre = Double.parseDouble(precio);
+        } catch (NumberFormatException nf) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un precio valido");
+            txtGestionDeProductosPrecio.requestFocus();
+        }
+    }//GEN-LAST:event_txtGestionDeProductosPrecioFocusLost
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        Producto pro = new Producto();
+        pro.setCodigo(Integer.parseInt(txtGestionDeProductosCodigo.getText()));
+        pro.setDescripcion(txtGestionDeProductosDescripcion.getText());
+        pro.setPrecio(Double.parseDouble(txtGestionDeProductosPrecio.getText()));
+        pro.setCategoria((Categoria) cmbGestionDeProductosCombo.getSelectedItem());
+        pro.setStock((Integer) spnGestionDeProductos.getValue());
+
+        pd.guardarProducto(pro);
+        llenarTabla();
+        limpiarCampos();
+        desactivarCampos();
+        btnGuardar.setEnabled(false);
+
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        // TODO add your handling code here:
+        int codigo = Integer.parseInt(txtGestionDeProductosCodigo.getText());
+        String descripcion = txtGestionDeProductosDescripcion.getText();
+        double precio = Double.parseDouble(txtGestionDeProductosPrecio.getText());
+        Categoria categoria = (Categoria) cmbFiltrarPorCategoria.getSelectedItem();
+        int stock = (Integer) spnGestionDeProductos.getValue();
+
+        productoElegido.setCodigo(codigo);
+        productoElegido.setDescripcion(descripcion);
+        productoElegido.setPrecio(precio);
+        productoElegido.setCategoria(categoria);
+        productoElegido.setStock(stock);
+
+        pd.modificarProductor(productoElegido);
+        productoElegido = null;
+        limpiarCampos();
+        desactivarCampos();
+        llenarTabla();
+        btnActualizar.setEnabled(false);
+
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void cmbFiltrarPorCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFiltrarPorCategoriaActionPerformed
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_cmbFiltrarPorCategoriaActionPerformed
+
+    private void tblGestionDeProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGestionDeProductosMouseClicked
+        // TODO add your handling code here:
+        btnActualizar.setEnabled(true);
+        btnEliminar.setEnabled(true);
+        int filaElegida = tblGestionDeProductos.getSelectedRow();
+
+        if (filaElegida != -1) {
+            int idProducto = (Integer) tblGestionDeProductos.getValueAt(filaElegida, 0);
+            int codigo = (Integer) tblGestionDeProductos.getValueAt(filaElegida, 1);
+            String descripcion = (String) tblGestionDeProductos.getValueAt(filaElegida, 2);
+            double precio = (Double) tblGestionDeProductos.getValueAt(filaElegida, 3);
+            Categoria tablaCate = (Categoria) tblGestionDeProductos.getValueAt(filaElegida, 4);
+            int stock = (Integer) tblGestionDeProductos.getValueAt(filaElegida, 5);
+
+            txtGestionDeProductosCodigo.setText(codigo + "");
+            txtGestionDeProductosDescripcion.setText(descripcion);
+            txtGestionDeProductosPrecio.setText(precio + "");
+            cmbGestionDeProductosCombo.setSelectedItem(tablaCate);
+            spnGestionDeProductos.setValue(stock);
+
+            activarCampos();
+            productoElegido = new Producto();
+            productoElegido.setIdProducto(idProducto);
+            productoElegido.setCodigo(codigo);
+            productoElegido.setDescripcion(descripcion);
+            productoElegido.setPrecio(precio);
+            productoElegido.setCategoria(tablaCate);
+            productoElegido.setStock(stock);
+
+        }
+    }//GEN-LAST:event_tblGestionDeProductosMouseClicked
+
+    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_btnCerrarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        pd.borrarProducto(productoElegido);
+        llenarTabla();
+        limpiarCampos();
+        desactivarCampos();
+        btnEliminar.setEnabled(false);
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -601,8 +707,8 @@ public class Escritorio extends javax.swing.JFrame {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox<String> cmbFiltrarPorCategoria;
-    private javax.swing.JComboBox<String> cmbGestionDeProductosCombo;
+    private javax.swing.JComboBox<Categoria> cmbFiltrarPorCategoria;
+    private javax.swing.JComboBox<Categoria> cmbGestionDeProductosCombo;
     private javax.swing.JComboBox<String> cmbListadoPorRubro;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JMenuBar jMenuBar1;
@@ -644,4 +750,77 @@ public class Escritorio extends javax.swing.JFrame {
     private javax.swing.JTextField txtListadoPorPrecioMax;
     private javax.swing.JTextField txtListadoPorPrecioMin;
     // End of variables declaration//GEN-END:variables
+    private void llenarCM() {
+        for (Categoria l : cd.obtenerCategoria()) {
+            cmbFiltrarPorCategoria.addItem(l);
+            cmbGestionDeProductosCombo.addItem(l);
+
+            cmbFiltrarPorCategoria.setSelectedIndex(-1);
+        }
+    }
+
+    private void activarCampos() {
+        txtGestionDeProductosCodigo.setEnabled(true);
+        txtGestionDeProductosDescripcion.setEnabled(true);
+        txtGestionDeProductosPrecio.setEnabled(true);
+        spnGestionDeProductos.setEnabled(true);
+        cmbGestionDeProductosCombo.setEnabled(true);
+    }
+
+    private void desactivarCampos() {
+        txtGestionDeProductosCodigo.setEnabled(false);
+        txtGestionDeProductosDescripcion.setEnabled(false);
+        txtGestionDeProductosPrecio.setEnabled(false);
+        spnGestionDeProductos.setEnabled(false);
+        cmbGestionDeProductosCombo.setEnabled(false);
+    }
+
+    private void limpiarCampos() {
+        txtGestionDeProductosCodigo.setText("");
+        txtGestionDeProductosDescripcion.setText("");
+        txtGestionDeProductosPrecio.setText("");
+        cmbGestionDeProductosCombo.setSelectedIndex(-1);
+        spnGestionDeProductos.setValue(0);
+    }
+
+    private void llenarCabezera() {
+        ArrayList<Object> c = new ArrayList<>();
+        c.add("ID");
+        c.add("Codigo");
+        c.add("Descripcion");
+        c.add("Precio");
+        c.add("Categoria");
+        c.add("Stock");
+
+        for (Object it : c) {
+            modelo.addColumn(it);
+            tblGestionDeProductos.setModel(modelo);
+
+        }
+    }
+
+    private void llenarTabla() {
+
+        borrarFila();
+        Categoria sel = (Categoria) cmbFiltrarPorCategoria.getSelectedItem();
+
+        if (sel != null) {
+            for (Producto p : pd.obtenerProducto()) {
+
+                if (p.getCategoria().equals(sel)) {
+
+                    modelo.addRow(new Object[]{p.getIdProducto(), p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getCategoria(), p.getStock()});
+                }
+            }
+        }
+    }
+
+    private void borrarFila() {
+        int a = modelo.getRowCount() - 1;
+
+        for (int i = a; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
+
 }
